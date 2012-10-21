@@ -79,10 +79,10 @@ function eval(x: any, env: Environment): any {
         var exp: any = x[2];
         env.dict[variable] = eval(exp, env);
     } else if (x[0] === 'lambda') {          // (lambad (var*) exp)
-        var variables: any[] = x[1];
+        var variables: any = x[1];
         var exp: any = x[2];
         var newEnv: Environment = new Environment({}, env);
-        return function (args: any[]): any {
+        return function (args: any): any {
             newEnv.update(variables, args);
             eval(exp, newEnv);
         }
@@ -97,7 +97,7 @@ function eval(x: any, env: Environment): any {
         for (var i = 0; i < x.length; ++i) {
             exps.push(eval(x[i], env));
         }
-        var proc: any = exps.shift();
+        var proc: (any) => any = exps.shift();
         return proc(exps);
     }
 }
@@ -129,7 +129,6 @@ function read_from(tokens: string[]): string[] {
         alert("SyntaxError: unexpected EOF while reading");
     }
     var token: string = tokens.shift();
-    console.log(token);
     if (token === "(") {
         var L: any[] = [];
         while (tokens[0] != ")") {
@@ -178,16 +177,12 @@ function toString(exp: any): string {
     }
 }
 
-var test = "(define a 10.1)";
-var res: string = toString(parse(test));
-alert(res);
-
 //////////////////////////////////////////////////
 // test
 //////////////////////////////////////////////////
+
 var global: Environment = createGlobalEnvironment();
 var test: string = '(define a (lambda (x) x))';
-// var test: string = '(define a 1)';
 eval(parse(test), global);
 var testf: string = '(a 1)'
 alert(String(eval(parse(testf), global)));
