@@ -56,17 +56,12 @@ class S {
         } else if (this.exp[0] === 'begin') {          // (begin exp*)
 
         } else {                                       // (proc exp*)
-            console.log('pass else');
             var exps: any[] = [];
             for (var i = 0; i < this.exp.length; ++i) {
                 var s: S = new S(this.exp[i], this.env);
                 exps.push(s.evaluate());
             }
-            console.log('exps[0]: ' + exps[0]);       // proc
-            console.log('exps[1]: ' + exps[1]);       // arg1
-            console.log('exps[2]: ' + exps[2]);       // arg2
             var proc: (any) => any = exps.shift();
-            console.log('exps[0]: ' + exps[0]);       // proc
             return proc(exps);
         }
     }
@@ -197,17 +192,56 @@ function createGlobalEnvironment(): Environment {
          'cdr',
          'eq?',
          '#t',
-         '#f'],
-        [function (x: any, y: any) {
+         '#f',
+         '+',
+         '-',
+         '*',
+         '/',
+         '>',
+         '<',
+        ],
+        [function (x: any[]) {
             var list = [];
-            list.push(x);
-            list.push(y);
+            list.push(x[0]);
+            list.push(x[1]);
+            return list;
         },
          (x: any[]) => x[0],
          (x: any[]) => x.slice(1),
          (x: any[]) => x[0] === x[1],
          true,
-         false,]
+         false,
+         function (args: any[]) {
+             var res = 0;
+             for (var i = 0; i < args.length; ++i) {
+                 res += args[i];
+             }
+             return res;
+         },
+         function (args: any[]) {
+             var res = 0;
+             for (var i = 0; i < args.length; ++i) {
+                 res -= args[i];
+             }
+             return res;
+         },
+         function (args: any[]) {
+             var res = 1;
+             for (var i = 0; i < args.length; ++i) {
+                 res *= args[i];
+             }
+             return res;
+         },
+         function (args: any[]) {
+             var res = args[0];
+             for (var i = 1; i < args.length; ++i) {
+                 res /= args[i];
+             }
+             return res;
+         },
+         (x: any[]): bool => x[0] > x[1],
+         (x: any[]): bool => x[0] < x[1],
+        ]
     );
 
     return env;
@@ -321,7 +355,7 @@ var global: Environment = createGlobalEnvironment();
 // console.log(String(stest.evaluate()));
 
 //////////
-// test1 lambda
+// pass test1 lambda
 //////////
 
 // var testset = '(define a (lambda (a) a))';
@@ -330,6 +364,23 @@ var global: Environment = createGlobalEnvironment();
 // var test = '(a 1)';
 // stest = parse(test, global);
 // console.log(String(stest.evaluate()));
+
+//////////
+// pass test2 define(scope)
+//////////
+
+// var a = '(define a 1)';
+// var b = '(define b 2)'
+// var pa = parse(a, global);
+// pa.evaluate();
+// var pb = parse(b, global);
+// pb.evaluate();
+// var testa = 'a';
+// var testb = 'b';
+// pa = parse(testa, global);
+// console.log(String(pa.evaluate()));
+// pb = parse(testb, global);
+// console.log(String(pb.evaluate()));
 
 //////////
 // pass test2 lambda
@@ -341,3 +392,28 @@ var global: Environment = createGlobalEnvironment();
 // var test = '(a 1 1)';
 // stest = parse(test, global);
 // console.log(String(stest.evaluate()));
+
+//////////
+// pass test3 lambda(fact & iter)
+//////////
+
+// var iter= '(define iter (lambda (k n res) (if (> k n) res (iter (+ k 1) n (* k res)))))'
+// var factorial = '(define factorial (lambda (n) (iter 1 n 1)))'
+// var test = parse(iter, global);
+// test.evaluate();
+// test = parse(factorial, global);
+// test.evaluate();
+// var tfactorial = '(factorial 5)'
+// test = parse(tfactorial, global);
+// console.log(String(test.evaluate()));
+
+//////////
+// test4 lambda
+//////////
+
+// var factorial = '(define factorial (lambda (n) (define iter (lambda (k n res) (if (> k n) res (iter (+ k 1) n (* k res))))) (iter 1 n 1)))'
+// var test = parse(factorial, global);
+// test.evaluate();
+// var tfactorial = '(factorial 5)'
+// test = parse(tfactorial, global);
+// console.log(String(test.evaluate()));
