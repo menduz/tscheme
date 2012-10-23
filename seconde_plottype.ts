@@ -54,7 +54,8 @@ class S {
             var sLambda: S = new SLambda(this.exp.slice(1), this.env);
             return sLambda.evaluate();
         } else if (this.exp[0] === 'begin') {          // (begin exp*)
-
+            var sBegin: S = new SBegin(this.exp.slice(1), this.env);
+            return sBegin.evaluate();
         } else {                                       // (proc exp*)
             var exps: any[] = [];
             for (var i = 0; i < this.exp.length; ++i) {
@@ -126,6 +127,7 @@ class SDefine extends S {
 
 class SLambda extends S {
     // lambda: ((var*) exp)
+    // error: if ((var*) exp1 exp2 exp3 ... )
 
     constructor(exp: any[], env: Environment) {
         super(exp, env);
@@ -139,6 +141,21 @@ class SLambda extends S {
             var s: S = new S(copy.exp[1], newEnv);
             return s.evaluate();
         }
+    }
+}
+
+class SBegin extends S {
+    constructor(exp: any[], env: Environment) {
+        super(exp, env);
+    }
+
+    evaluate(): any {
+        var val: any;
+        for (var i = 0; i < this.exp.length; ++i) {
+            var s: S = new S(this.exp[i], this.env);
+            val = s.evaluate();
+        }
+        return val;
     }
 }
 
@@ -408,12 +425,33 @@ var global: Environment = createGlobalEnvironment();
 // console.log(String(test.evaluate()));
 
 //////////
-// test4 lambda
+// pass test4 lambda
 //////////
 
-// var factorial = '(define factorial (lambda (n) (define iter (lambda (k n res) (if (> k n) res (iter (+ k 1) n (* k res))))) (iter 1 n 1)))'
+// var factorial = '(define factorial (lambda (n) (begin (define iter (lambda (k n res) (if (> k n) res (iter (+ k 1) n (* k res))))) (iter 1 n 1))))'
 // var test = parse(factorial, global);
 // test.evaluate();
 // var tfactorial = '(factorial 5)'
 // test = parse(tfactorial, global);
 // console.log(String(test.evaluate()));
+
+// TODO
+//////////
+// test3 define(nest)
+//////////
+
+// var a = '(define a (lambda () (define b 1) b))';
+// var pa = parse(a, global);
+// pa.evaluate();
+// var testa = '(a)';
+// pa = parse(testa, global);
+// console.log(String(pa.evaluate()));
+// console.log(global.find('a')['a']);
+
+//////////
+// pass test begin
+//////////
+
+// var a = '(begin (+ 1 1) (* 1 2))';
+// var pa = parse(a, global);
+// console.log(String(pa.evaluate()));
