@@ -1,4 +1,5 @@
 // Scheme interpreter by TypeScript
+// reference: http://norvig.com/lispy.html
 
 //////////////////////////////////////////////////
 // S-expression
@@ -39,7 +40,7 @@ class S {
         } else if (! (this.exp instanceof Array)) {
             return this.exp;
         } else if (this.exp[0] === 'quote') {          // (quote exp)
-            var sQuote: S = new SQuote(this.exp.slice(1), this.env);
+            var sQuote: S = new SQuote(this.exp[1], this.env);
             return sQuote.evaluate();
         } else if (this.exp[0] === 'if') {             // (if test conseq alt)
             var sIf: S = new SIf(this.exp.slice(1), this.env);
@@ -127,7 +128,8 @@ class SDefine extends S {
 
 class SLambda extends S {
     // lambda: ((var*) exp)
-    // error: if ((var*) exp1 exp2 exp3 ... )
+    // (lambda ((var*) exp1 exp2 ... )) =>
+    //     (lambda ((var*) (begin (exp1) (exp2) ... )))
 
     constructor(exp: any[], env: Environment) {
         super(exp, env);
@@ -179,9 +181,7 @@ class Environment {
                 this.dict[variable[i]] = values[i];
             }
         } else {
-            // TODO
-            // need to change
-            alert("error: the number of variables isn't same as that of values");
+            console.log("error: the number of variables isn't same as that of values");
         }
     }
 
@@ -217,14 +217,15 @@ function createGlobalEnvironment(): Environment {
          '>',
          '<',
         ],
+
         [function (x: any[]) {
             var list = [];
             list.push(x[0]);
             list.push(x[1]);
             return list;
         },
-         (x: any[]) => x[0],
-         (x: any[]) => x.slice(1),
+         (x: any[]) => x[0][0],
+         (x: any[]) => x[0].slice(1),
          (x: any[]) => x[0] === x[1],
          true,
          false,
@@ -300,7 +301,7 @@ function readFrom(tokens: string[]): any[] {
 
     function innerReadFrom(tokens: string[]): any {
         if (tokens.length === 0) {
-            alert("SyntaxError: unexpected EOF while reading");
+            console.log("SyntaxError: unexpected EOF while reading");
         }
 
         var token: string = tokens.shift();
@@ -313,7 +314,7 @@ function readFrom(tokens: string[]): any[] {
             tokens.shift();
             return L;
         } else if (token === ")") {
-            alert("SyntaxError: unexpected )");
+            console.log("SyntaxError: unexpected )");
         } else {
             var isNotANumber: (string) => bool = isNaN;
             if (!isNotANumber(token)) {
@@ -428,25 +429,23 @@ var global: Environment = createGlobalEnvironment();
 // pass test4 lambda
 //////////
 
-// var factorial = '(define factorial (lambda (n) (begin (define iter (lambda (k n res) (if (> k n) res (iter (+ k 1) n (* k res))))) (iter 1 n 1))))'
+// var factorial = '(define factorial (lambda (n) (begin (define iter (lambda (k res) (if (> k n) res (iter (+ k 1) (* k res))))) (iter 1 1))))'
 // var test = parse(factorial, global);
 // test.evaluate();
 // var tfactorial = '(factorial 5)'
 // test = parse(tfactorial, global);
 // console.log(String(test.evaluate()));
 
-// TODO
 //////////
 // test3 define(nest)
 //////////
 
-// var a = '(define a (lambda () (define b 1) b))';
+// var a = '(define a (lambda () (begin (define b 1) b)))';
 // var pa = parse(a, global);
 // pa.evaluate();
 // var testa = '(a)';
 // pa = parse(testa, global);
 // console.log(String(pa.evaluate()));
-// console.log(global.find('a')['a']);
 
 //////////
 // pass test begin
@@ -454,4 +453,39 @@ var global: Environment = createGlobalEnvironment();
 
 // var a = '(begin (+ 1 1) (* 1 2))';
 // var pa = parse(a, global);
+// console.log(String(pa.evaluate()));
+
+//////////
+// pass test cons
+//////////
+
+// var a = '(cons (car (cons 1 2)) (cdr (cons 3 4)))';
+// var pa = parse(a, global);
+// console.log(String(pa.evaluate()));
+
+//////////
+// pass test car
+//////////
+
+// var a = '(car (quote (1 2 3 4)))'
+// var pa = parse(a, global);
+// console.log(String(pa.evaluate()));
+
+//////////
+// pass test cdr
+//////////
+
+// var a = '(cdr (quote (1 2 3 4)))'
+// var pa = parse(a, global);
+// console.log(String(pa.evaluate()));
+
+//////////
+// pass test fib
+//////////
+
+// var a = '(define fib (lambda (n) (begin (define iter (lambda (a b k) (begin (if (> k n) a (iter b (+ b a) (+ k 1)))))) (iter 0 1 1))))'
+// var pa = parse(a, global);
+// pa.evaluate();
+// var b = '(fib 8)';
+// pa = parse(b, global);
 // console.log(String(pa.evaluate()));
