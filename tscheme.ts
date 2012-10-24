@@ -218,47 +218,47 @@ function createGlobalEnvironment(): Environment {
          '<',
         ],
 
-        [function (x: any[]) {
+        [function (x: any[]): any[] {                    // cons
             var list = [];
             list.push(x[0]);
             list.push(x[1]);
             return list;
         },
-         (x: any[]) => x[0][0],
-         (x: any[]) => x[0].slice(1),
-         (x: any[]) => x[0] === x[1],
-         true,
-         false,
-         function (args: any[]) {
+         (x: any[]): any => x[0][0],                   // car
+         (x: any[]): any[] => x[0].slice(1),             // cdr
+         (x: any[]): bool => x[0] === x[1],             // eq?
+         true,                                    // #t
+         false,                                   // #f
+         function (args: number[]): number {                 // '+'
              var res = 0;
              for (var i = 0; i < args.length; ++i) {
                  res += args[i];
              }
              return res;
          },
-         function (args: any[]) {
+         function (args: number[]): number {                 // '-'
              var res = 0;
              for (var i = 0; i < args.length; ++i) {
                  res -= args[i];
              }
              return res;
          },
-         function (args: any[]) {
+         function (args: number[]): number {                 // '*'
              var res = 1;
              for (var i = 0; i < args.length; ++i) {
                  res *= args[i];
              }
              return res;
          },
-         function (args: any[]) {
+         function (args: number[]): number {                 // '/'
              var res = args[0];
              for (var i = 1; i < args.length; ++i) {
                  res /= args[i];
              }
              return res;
          },
-         (x: any[]): bool => x[0] > x[1],
-         (x: any[]): bool => x[0] < x[1],
+         (x: any[]): bool => x[0] > x[1],         // '>'
+         (x: any[]): bool => x[0] < x[1],         // '<'
         ]
     );
 
