@@ -147,6 +147,8 @@ class SLambda extends S {
 }
 
 class SBegin extends S {
+    // being: ((exp1) (exp2) ... )
+
     constructor(exp: any[], env: Environment) {
         super(exp, env);
     }
@@ -208,6 +210,7 @@ function createGlobalEnvironment(): Environment {
          'car',
          'cdr',
          'eq?',
+         'null?',
          '#t',
          '#f',
          '+',
@@ -216,41 +219,50 @@ function createGlobalEnvironment(): Environment {
          '/',
          '>',
          '<',
+         'view',
         ],
 
-        [function (x: any[]): any[] {                    // cons
+        [function (x: any[]): any[] {             // cons
             var list = [];
-            list.push(x[0]);
-            list.push(x[1]);
+            for (var i = 0; i < x.length; ++i) {
+                if (x[i] instanceof Array) {
+                    for (var j = 0; j < x[i].length; ++j) {
+                        list.push(x[i][j]);
+                    }
+                } else {
+                    list.push(x[i]);
+                }
+            }
             return list;
         },
-         (x: any[]): any => x[0][0],                   // car
-         (x: any[]): any[] => x[0].slice(1),             // cdr
-         (x: any[]): bool => x[0] === x[1],             // eq?
+         (x: any[]): any => x[0][0],              // car
+         (x: any[]): any[] => x[0].slice(1),      // cdr
+         (x: any[]): bool => x[0] === x[1],       // eq?
+         (x: any[]): bool => x[0].length === 0,   // null?
          true,                                    // #t
          false,                                   // #f
-         function (args: number[]): number {                 // '+'
+         function (args: number[]): number {      // '+'
              var res = 0;
              for (var i = 0; i < args.length; ++i) {
                  res += args[i];
              }
              return res;
          },
-         function (args: number[]): number {                 // '-'
+         function (args: number[]): number {      // '-'
              var res = 0;
              for (var i = 0; i < args.length; ++i) {
                  res -= args[i];
              }
              return res;
          },
-         function (args: number[]): number {                 // '*'
+         function (args: number[]): number {      // '*'
              var res = 1;
              for (var i = 0; i < args.length; ++i) {
                  res *= args[i];
              }
              return res;
          },
-         function (args: number[]): number {                 // '/'
+         function (args: number[]): number {      // '/'
              var res = args[0];
              for (var i = 1; i < args.length; ++i) {
                  res /= args[i];
@@ -259,6 +271,17 @@ function createGlobalEnvironment(): Environment {
          },
          (x: any[]): bool => x[0] > x[1],         // '>'
          (x: any[]): bool => x[0] < x[1],         // '<'
+         // function (filename: string): void {   // view
+         //     var img = document.createElement("img");
+         //     document.body.appendChild(img);
+         //     img.src = filename;
+         // },
+         function (): void {                      // view
+             var img = document.createElement("img");
+             document.body.appendChild(img);
+             // img.src = 'blackcat.jpg';
+             img.src = 'roriyuri.jpg';
+         },
         ]
     );
 
@@ -437,7 +460,7 @@ var global: Environment = createGlobalEnvironment();
 // console.log(String(test.evaluate()));
 
 //////////
-// test3 define(nest)
+// pass test3 define(nest)
 //////////
 
 // var a = '(define a (lambda () (begin (define b 1) b)))';
@@ -489,3 +512,33 @@ var global: Environment = createGlobalEnvironment();
 // var b = '(fib 8)';
 // pa = parse(b, global);
 // console.log(String(pa.evaluate()));
+
+//////////
+// pass test view
+//////////
+
+// var a = '(view)';
+// var pa = parse(a, global);
+// pa.evaluate();
+
+//////////
+// pass test null?
+//////////
+
+// var c = '(define c (cdr (cdr (cons 1 2))))';
+// var pc = parse(c, global);
+// pc.evaluate();
+// var tmp = 'c';
+// var ptmp = parse(tmp, global);
+// console.log(ptmp.evaluate());
+// var a = '(null? c)';
+// var pa = parse(a, global);
+// console.log(pa.evaluate());
+
+//////////
+// test nested cons
+//////////
+
+// var a = '(cons 1 (cons 2 3)))'
+// var pa = parse(a, global);
+// console.log(pa.evaluate());
