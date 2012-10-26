@@ -191,11 +191,19 @@ class Environment {
         if (variable in this.dict) {
             return this.dict;
         } else {
-            // TODO
-            // if outer is null, cause invisible error
-            return this.outer.find(variable);
+            if (this.outer === null) {
+                console.log("error: the variable not found")
+            } else {
+                return this.outer.find(variable);
+            }
         }
     }
+}
+
+
+// for HTMLElement.src
+interface HTMLElement {
+    src: string;
 }
 
 function createGlobalEnvironment(): Environment {
@@ -279,8 +287,7 @@ function createGlobalEnvironment(): Environment {
          function (): void {                      // view
              var img = document.createElement("img");
              document.body.appendChild(img);
-             // img.src = 'blackcat.jpg';
-             img.src = 'roriyuri.jpg';
+             img.src = 'blackcat.jpg';
          },
         ]
     );
@@ -304,7 +311,7 @@ function tokenize(str: string): string[] {
     function replaceAll(expression: string, org: string, dest: string): string {
         return expression.split(org).join(dest);
     }
-    
+
     str = replaceAll(str, "(", " ( ");
     str = replaceAll(str, ")", " ) ");
 
@@ -536,9 +543,9 @@ var global: Environment = createGlobalEnvironment();
 // console.log(pa.evaluate());
 
 //////////
-// test nested cons
+// pass test nested cons
 //////////
 
-// var a = '(cons 1 (cons 2 3)))'
+// var a = '(cons 1 (cons 2 (cons 3 4)))'
 // var pa = parse(a, global);
 // console.log(pa.evaluate());
