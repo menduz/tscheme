@@ -233,7 +233,7 @@ function createGlobalEnvironment(): Environment {
         [function (x: any[]): any[] {             // cons
             var list = [];
             for (var i = 0; i < x.length; ++i) {
-                if (x[i] instanceof Array) {
+                if (i === x.length - 1 && x[i] instanceof Array) {
                     for (var j = 0; j < x[i].length; ++j) {
                         list.push(x[i][j]);
                     }
@@ -547,5 +547,13 @@ var global: Environment = createGlobalEnvironment();
 //////////
 
 // var a = '(cons 1 (cons 2 (cons 3 4)))'
+// var pa = parse(a, global);
+// console.log(pa.evaluate());
+
+//////////
+// test nested cons
+//////////
+
+// var a = '(cons (cons 0 1) (cons 2 (cons 3 4)))'
 // var pa = parse(a, global);
 // console.log(pa.evaluate());
