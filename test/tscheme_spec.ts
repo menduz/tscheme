@@ -6,7 +6,7 @@ import tscheme = module('../tscheme');
 
 describe('S', () => {
     describe('#evaluate()', () => {
-        var global: Environment = tscheme.createGlobalEnvironment();
+        var global: tscheme.Environment = tscheme.createGlobalEnvironment();
         it('should evaluate an if object', () => {
             var testif = '(if #t 1 0)';
             var stest = tscheme.parse(testif, global);
