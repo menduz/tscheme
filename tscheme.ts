@@ -227,7 +227,7 @@ export function createGlobalEnvironment(): Environment {
          '/',
          '>',
          '<',
-         'view',
+         // 'view',
         ],
 
         [function (x: any[]): any[] {             // cons
@@ -284,11 +284,11 @@ export function createGlobalEnvironment(): Environment {
          //     document.body.appendChild(img);
          //     img.src = filename;
          // },
-         function (): void {                      // view
-             var img = document.createElement("img");
-             document.body.appendChild(img);
-             img.src = 'blackcat.jpg';
-         },
+         // function (): void {                      // view
+         //     var img = document.createElement("img");
+         //     document.body.appendChild(img);
+         //     img.src = 'blackcat.jpg';
+         // },
         ]
     );
 
