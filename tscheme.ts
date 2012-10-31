@@ -5,7 +5,7 @@
 // S-expression
 //////////////////////////////////////////////////
 
-class S {
+export class S {
     // S-expression has 'expression'
     // ex) exp = ['lambda', 'x', 'x'] or [1] or ...
     
@@ -167,7 +167,7 @@ class SBegin extends S {
 // Environment
 //////////////////////////////////////////////////
 
-class Environment {
+export class Environment {
     // Environment has 'dict' and 'outer'
     // dict: {'var': val}
     // outer: Environment
@@ -206,7 +206,7 @@ interface HTMLElement {
     src: string;
 }
 
-function createGlobalEnvironment(): Environment {
+export function createGlobalEnvironment(): Environment {
     // add global Environment to primitive procedures
 
     var env: Environment = new Environment(null);
@@ -299,7 +299,7 @@ function createGlobalEnvironment(): Environment {
 // parse
 //////////////////////////////////////////////////
 
-function parse(str: string, env: Environment): S {
+export function parse(str: string, env: Environment): S {
     // read S-expression from string
 
     return new S(readFrom(tokenize(str)), env);
