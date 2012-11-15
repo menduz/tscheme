@@ -13,7 +13,7 @@ export function ast(exps: any): s_expression.S {
         return new s_expression.SSymbol(exps);
     } else if (! (exps instanceof Array)) {
         return new s_expression.SNum(exps);
-    } else if (exps[0] === 'quote') {             // (quote exps)
+    } else if (exps[0] === 'quote') {             // (quote (exp1 exp2 ...))
         return new s_expression.SQuote([
             new s_expression.SStr(exps[0]),
             ast(exps[1]),
@@ -37,7 +37,7 @@ export function ast(exps: any): s_expression.S {
             ast(exps[1]),
             ast(exps[2]),
         ]);
-    } else if (exps[0] === 'lambda') {            // (lambad (var*) exps)
+    } else if (exps[0] === 'lambda') {            // (lambad (var1 var2 ...) exps)
         var variables: s_expression.S[] = [];
         for (var i = 0; i < exps[1].length; ++i) {
             variables.push(new s_expression.SStr(exps[1][i]));
@@ -47,7 +47,7 @@ export function ast(exps: any): s_expression.S {
             variables,
             ast(exps[2]),
         ]);
-    } else if (exps[0] === 'begin') {             // (begin exps*)
+    } else if (exps[0] === 'begin') {             // (begin (exp1) (exp2) ...)
         var begin = exps[0];
         var tmp = exps.slice(1);
         var expressions = [];
@@ -58,7 +58,7 @@ export function ast(exps: any): s_expression.S {
             new s_expression.SStr(begin),
             expressions,
         ]);
-    } else {                                      // (proc exps*)
+    } else {                                      // (proc exp1 exp2 ...)
         var expressions: any[] = [];
         for (var i = 0; i < exps.length; ++i) {
             var s: s_expression.S = ast(exps[i]);

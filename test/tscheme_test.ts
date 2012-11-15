@@ -146,17 +146,8 @@ describe('SLambda', () => {
 describe('#parse', () => {
     it('should parse string to s_expression', () => {
         var teststring = '(define a (lambda (x) (+ x 1)))';
-        var res = parse.parse(teststring);
-        assert.equal(String(res[0]), 'define');
-    });
-});
-
-describe('#ast()', () => {
-    var global: environment.Environment = environment.createGlobalEnvironment();
-    it('should make ast', () => {
-        var testast = '#t';
-        var s = ast.ast(testast);
-        assert.equal(String(s.evaluate(global)), 'true');
+        var parsed = parse.parse(teststring);
+        assert.equal(String(parsed[0]), 'define');
     });
 });
 
@@ -164,8 +155,8 @@ describe('#ast()', () => {
     var global: environment.Environment = environment.createGlobalEnvironment();
     it('should make ast', () => {
         var testast = '(if #t 1 0)';
-        var res = parse.parse(testast);
-        var s = ast.ast(res);
+        var parsed = parse.parse(testast);
+        var s = ast.ast(parsed);
         assert.equal(String(s.evaluate(global)), '1');
     });
 });
@@ -175,8 +166,8 @@ describe('SProc', () => {
         var global: environment.Environment = environment.createGlobalEnvironment();
         it('should evaluate a lambda object', () => {
             var testproc = '((lambda (a) (+ a 1)) 1)';
-            var res = parse.parse(testproc);
-            var s = ast.ast(res);
+            var parsed = parse.parse(testproc);
+            var s = ast.ast(parsed);
             assert.equal(String(s.evaluate(global)), '2');
         });
     });
@@ -187,8 +178,8 @@ describe('SBegin', () => {
         var global: environment.Environment = environment.createGlobalEnvironment();
         it('should evaluate a begin object', () => {
             var testbegin = '(begin (+ 1 1) (* 2 2))';
-            var res = parse.parse(testbegin);
-            var s = ast.ast(res);
+            var parsed = parse.parse(testbegin);
+            var s = ast.ast(parsed);
             assert.equal(String(s.evaluate(global)), '4');
         });
     });
@@ -199,8 +190,8 @@ describe('SProc', () => {
         var global: environment.Environment = environment.createGlobalEnvironment();
         it('should evaluate a proc object', () => {
             var testproc = '(+ 1 1)';
-            var res = parse.parse(testproc);
-            var s = ast.ast(res);
+            var parsed = parse.parse(testproc);
+            var s = ast.ast(parsed);
             assert.equal(String(s.evaluate(global)), '2');
         });
     });
@@ -211,12 +202,12 @@ describe('factrial function', () => {
         var global: environment.Environment = environment.createGlobalEnvironment();
         it('should culcurate factorial 5', () => {
             var testfactrial = '(define factrial (lambda (n) (begin (define fact-iter (lambda (k result) (if (> k n) result (fact-iter (+ k 1) (* k result))))) (fact-iter 1 1))))';
-            var res = parse.parse(testfactrial);
-            var s = ast.ast(res);
+            var parsed = parse.parse(testfactrial);
+            var s = ast.ast(parsed);
             s.evaluate(global);
             var test = '(factrial 5)';
-            var res = parse.parse(test);
-            var s = ast.ast(res);
+            parsed = parse.parse(test);
+            s = ast.ast(parsed);
             assert.equal(String(s.evaluate(global)), '120');
         });
     });
