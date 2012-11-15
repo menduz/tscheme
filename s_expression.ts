@@ -86,11 +86,11 @@ export class SStr extends S {
 export class SQuote extends S {
     // (quotation (value1 value2 ...))
 
-    constructor(exp: S[]) {
+    constructor(exp: any[]) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): S[] {
+    evaluate(env: environment.Environment): any[] {
         return this.exp[1];
     }
 }

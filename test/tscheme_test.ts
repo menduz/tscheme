@@ -151,6 +151,18 @@ describe('#parse', () => {
     });
 });
 
+describe('SQuote', () => {
+    describe('#evaluate()', () => {
+        var global: environment.Environment = environment.createGlobalEnvironment();
+        it('should evaluate a lambda object', () => {
+            var testproc = '(quote (a 1))';
+            var parsed = parse.parse(testproc);
+            var s = ast.ast(parsed);
+            assert.equal(String(s.evaluate(global)), 'a,1');
+        });
+    });
+});
+
 describe('#ast()', () => {
     var global: environment.Environment = environment.createGlobalEnvironment();
     it('should make ast', () => {
@@ -169,6 +181,18 @@ describe('SProc', () => {
             var parsed = parse.parse(testproc);
             var s = ast.ast(parsed);
             assert.equal(String(s.evaluate(global)), '2');
+        });
+    });
+});
+
+describe('SProc', () => {
+    describe('#evaluate()', () => {
+        var global: environment.Environment = environment.createGlobalEnvironment();
+        it('should evaluate a lambda object', () => {
+            var testproc = '(* 2 (car (quote (5 1))))'
+            var parsed = parse.parse(testproc);
+            var s = ast.ast(parsed);
+            assert.equal(String(s.evaluate(global)), '10');
         });
     });
 });

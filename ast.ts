@@ -16,7 +16,7 @@ export function ast(exps: any): s_expression.S {
     } else if (exps[0] === 'quote') {             // (quote (exp1 exp2 ...))
         return new s_expression.SQuote([
             new s_expression.SStr(exps[0]),
-            ast(exps[1]),
+            exps[1],
         ]);
     } else if (exps[0] === 'if') {                // (if test conseq alt)
         return new s_expression.SIf([
