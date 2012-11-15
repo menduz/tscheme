@@ -214,8 +214,6 @@ describe('factrial function', () => {
             var res = parse.parse(testfactrial);
             var s = ast.ast(res);
             s.evaluate(global);
-            var tmp = ast.ast('#t');
-            console.log(tmp.evaluate(global));
             var test = '(factrial 5)';
             var res = parse.parse(test);
             var s = ast.ast(res);

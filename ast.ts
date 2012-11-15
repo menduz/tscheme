@@ -10,7 +10,6 @@ export function ast(exps: any): s_expression.S {
     // Return ast of Scheme from strings
 
     if (typeof exps === 'string') {
-        console.log(exps);
         return new s_expression.SSymbol(exps);
     } else if (! (exps instanceof Array)) {
         return new s_expression.SNum(exps);
@@ -29,7 +28,7 @@ export function ast(exps: any): s_expression.S {
     } else if (exps[0] === 'define') {            // (define var exps)
         return new s_expression.SDefine([
             new s_expression.SStr(exps[0]),
-            ast(exps[1]),
+            new s_expression.SStr(exps[1]),
             ast(exps[2]),
         ]);
     } else if (exps[0] === 'set!') {              // (set! var exps)
@@ -51,7 +50,7 @@ export function ast(exps: any): s_expression.S {
     } else if (exps[0] === 'begin') {             // (begin exps*)
         var begin = exps[0];
         var tmp = exps.slice(1);
-        var expressions = []
+        var expressions = [];
         for (var i = 0; i < tmp.length; ++i) {
             expressions.push(ast(tmp[i]));
         }
