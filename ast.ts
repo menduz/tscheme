@@ -1,49 +1,49 @@
 // Scheme interpreter by TypeScript
 
-import s_expression = module('s_expression');
+/// <reference path="s_expression.ts"/>
 
 //////////////////////////////////////////////////
 // ast
 //////////////////////////////////////////////////
 
-export function ast(exps: any): s_expression.S {
+function ast(exps: any): S {
     // Return ast of Scheme from strings
 
     if (typeof exps === 'string') {
-        return new s_expression.SSymbol(exps);
+        return new SSymbol(exps);
     } else if (! (exps instanceof Array)) {
-        return new s_expression.SNum(exps);
+        return new SNum(exps);
     } else if (exps[0] === 'quote') {             // (quote (exp1 exp2 ...))
-        return new s_expression.SQuote([
-            new s_expression.SStr(exps[0]),
+        return new SQuote([
+            new SStr(exps[0]),
             exps[1],
         ]);
     } else if (exps[0] === 'if') {                // (if test conseq alt)
-        return new s_expression.SIf([
-            new s_expression.SStr(exps[0]),
+        return new SIf([
+            new SStr(exps[0]),
             ast(exps[1]),
             ast(exps[2]),
             ast(exps[3]),
         ]);
     } else if (exps[0] === 'define') {            // (define var exps)
-        return new s_expression.SDefine([
-            new s_expression.SStr(exps[0]),
-            new s_expression.SStr(exps[1]),
+        return new SDefine([
+            new SStr(exps[0]),
+            new SStr(exps[1]),
             ast(exps[2]),
         ]);
     } else if (exps[0] === 'set!') {              // (set! var exps)
-        return new s_expression.SSet([
-            new s_expression.SStr(exps[0]),
+        return new SSet([
+            new SStr(exps[0]),
             ast(exps[1]),
             ast(exps[2]),
         ]);
     } else if (exps[0] === 'lambda') {            // (lambad (var1 var2 ...) exps)
-        var variables: s_expression.S[] = [];
+        var variables: S[] = [];
         for (var i = 0; i < exps[1].length; ++i) {
-            variables.push(new s_expression.SStr(exps[1][i]));
+            variables.push(new SStr(exps[1][i]));
         }
-        return new s_expression.SLambda([
-            new s_expression.SStr(exps[0]),
+        return new SLambda([
+            new SStr(exps[0]),
             variables,
             ast(exps[2]),
         ]);
@@ -54,16 +54,16 @@ export function ast(exps: any): s_expression.S {
         for (var i = 0; i < tmp.length; ++i) {
             expressions.push(ast(tmp[i]));
         }
-        return new s_expression.SBegin([
-            new s_expression.SStr(begin),
+        return new SBegin([
+            new SStr(begin),
             expressions,
         ]);
     } else {                                      // (proc exp1 exp2 ...)
         var expressions: any[] = [];
         for (var i = 0; i < exps.length; ++i) {
-            var s: s_expression.S = ast(exps[i]);
+            var s: S = ast(exps[i]);
             expressions.push(s);
         }
-        return new s_expression.SProc(expressions);
+        return new SProc(expressions);
     }
 }

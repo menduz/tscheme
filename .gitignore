@@ -5,3 +5,4 @@ obj/
 *.swp
 *~
 *.js
+test/test.ts

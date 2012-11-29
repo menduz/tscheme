@@ -1,12 +1,12 @@
 // Scheme interpreter by TypeScript
 
-import environment = module('environment');
+/// <reference path="environment.ts"/>
 
 //////////////////////////////////////////////////
 // S-expression
 //////////////////////////////////////////////////
 
-export class S {
+class S {
     // S is a super class
     // S stands for S-expression
     // S has 'expression'
@@ -14,7 +14,7 @@ export class S {
     constructor(public exp: any) {
     }
 
-    evaluate(env: environment.Environment): any {
+    evaluate(env: Environment): any {
         // evaluate S-expression
 
         console.log('evaluate of super class S');
@@ -47,62 +47,62 @@ export class S {
     }
 }
 
-export class SSymbol extends S {
+class SSymbol extends S {
     // symbol
 
     constructor(exp: string) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): any {
+    evaluate(env: Environment): any {
         return env.find(this.exp)[this.exp];
     }
 }
 
-export class SNum extends S {
+class SNum extends S {
     // number
 
     constructor(exp: number) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): number {
+    evaluate(env: Environment): number {
         return this.exp;
     }
 }
 
-export class SStr extends S {
+class SStr extends S {
     // string
 
     constructor(exp: string) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): string {
+    evaluate(env: Environment): string {
         return this.exp;
     }
 }
 
-export class SQuote extends S {
+class SQuote extends S {
     // (quotation (value1 value2 ...))
 
     constructor(exp: any[]) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): any[] {
+    evaluate(env: Environment): any[] {
         return this.exp[1];
     }
 }
 
-export class SIf extends S {
+class SIf extends S {
     // (if test conseq alt)
 
     constructor(exp: S[]) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): any {
+    evaluate(env: Environment): any {
         var test: S = this.exp[1];
         var conseq: S = this.exp[2];
         var alt: S = this.exp[3];
@@ -114,35 +114,35 @@ export class SIf extends S {
     }
 }
 
-export class SSet extends S {
+class SSet extends S {
     // (set! variable expression)
 
     constructor(exp: S[]) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): void {
+    evaluate(env: Environment): void {
         var variable: string = this.exp[1].evaluate(env);
         var expression: S = this.exp[2];
         env.find(variable)[variable] = expression.evaluate(env);
     }
 }
 
-export class SDefine extends S {
+class SDefine extends S {
     // (define variable expression)
 
     constructor(exp: S[]) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): void {
+    evaluate(env: Environment): void {
         var variable: string = this.exp[1].evaluate(env);
         var expression: S = this.exp[2];
         env.dict[variable] = expression.evaluate(env);
     }
 }
 
-export class SLambda extends S {
+class SLambda extends S {
     // (lambda (var*) expression)
     // (lambda ((var*) exp1 exp2 ... )) =>
     //     (lambda ((var*) (begin (exp1) (exp2) ... )))
@@ -151,8 +151,8 @@ export class SLambda extends S {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): (any) => any {
-        var newenv: environment.Environment = new environment.Environment(env);
+    evaluate(env: Environment): (any) => any {
+        var newenv: Environment = new Environment(env);
         var variables: string[] = [];
         var expression = this.exp[2];
         for (var i = 0; i < this.exp[1].length; ++i) {
@@ -165,14 +165,14 @@ export class SLambda extends S {
     }
 }
 
-export class SBegin extends S {
+class SBegin extends S {
     // (being (exp1) (exp2) ... )
 
     constructor(exp: S[]) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): any {
+    evaluate(env: Environment): any {
         for (var i = 0; i < this.exp[1].length - 1; ++i) {
             this.exp[1][i].evaluate(env);
         }
@@ -180,14 +180,14 @@ export class SBegin extends S {
     }
 }
 
-export class SProc extends S {
+class SProc extends S {
     // (proc args*)
 
     constructor(exp: S[]) {
         super(exp);
     }
 
-    evaluate(env: environment.Environment): any {
+    evaluate(env: Environment): any {
         var expressions: any[] = [];
         for (var i = 0; i < this.exp.length; ++i) {
             expressions.push(this.exp[i].evaluate(env));

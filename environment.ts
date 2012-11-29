@@ -4,7 +4,7 @@
 // Environment
 //////////////////////////////////////////////////
 
-export class Environment {
+class Environment {
     // Environment has 'dict' and 'outer'
     // dict: {'var': val}
     // outer: Environment
@@ -42,7 +42,7 @@ export class Environment {
     }
 }
 
-export function createGlobalEnvironment(): Environment {
+function createGlobalEnvironment(): Environment {
     // add global Environment to primitive procedures
 
     var env: Environment = new Environment(null);

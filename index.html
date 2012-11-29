@@ -1,18 +1,19 @@
 <html>
 <head>
-<script src="tscheme.js"></script>
+<script src="all.js"></script>
 <script type="text/javascript">
 
-run = function(s)
-{
+run = function(s) {
+    var global = createGlobalEnvironment();
     var list = s.split('\n');
     var res = "";
     for (var i = 0; i < list.length && list[i] !== ''; ++i) {
-        var S = parse(list[i], global);
-        res += S.toString();
+        var parsed = parse(list[i]);
+        var s = ast(parsed);
+        res += s.toString();
         res += '\n';
         res += '>>> ';
-        res += S.evaluate();
+        res += s.evaluate(global);
         res += '\n';
     }
     document.getElementById("dv").innerText=res;

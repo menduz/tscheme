@@ -4,13 +4,13 @@
 // parse
 //////////////////////////////////////////////////
 
-export function parse(str: string): string[] {
+function parse(str: string): string[] {
     // read S-expression from string
 
     return readFrom(tokenize(str));
 }
 
-export function tokenize(str: string): string[] {
+function tokenize(str: string): string[] {
     // convert string to list of tokens
 
     function replaceAll(expression: string, org: string, dest: string): string {
