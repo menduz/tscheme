@@ -144,7 +144,7 @@ class SDefine extends S {
 
 class SLambda extends S {
     // (lambda (var*) expression)
-    // (lambda ((var*) exp1 exp2 ... )) =>
+    // (lambda ((var*) (exp1) (exp2) ... )) =>
     //     (lambda ((var*) (begin (exp1) (exp2) ... )))
 
     constructor(exp: any[]) {
@@ -154,7 +154,7 @@ class SLambda extends S {
     evaluate(env: Environment): (any) => any {
         var newenv: Environment = new Environment(env);
         var variables: string[] = [];
-        var expression = this.exp[2];
+        var expression: S = this.exp[2];
         for (var i = 0; i < this.exp[1].length; ++i) {
             variables.push(this.exp[1][i].evaluate(env));
         }
