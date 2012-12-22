@@ -129,7 +129,9 @@ class SSet extends S {
 }
 
 class SDefine extends S {
-    // (define variable expression)
+    // (define name expression)
+    // (define (func-name variable) (exp1) (exp2) ...) =>
+    //     (define func-name (lambda variable) (exp1) (exp2) ...)
 
     constructor(exp: S[]) {
         super(exp);

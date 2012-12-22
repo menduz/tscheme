@@ -37,20 +37,28 @@ function ast(exps: any): S {
             ast(exps[1]),
             ast(exps[2]),
         ]);
-    } else if (exps[0] === 'lambda') {            // (lambad (var1 var2 ...) exps)
+    } else if (exps[0] === 'lambda') {            // (lambad (var1 var2 ...) (exp1) (exp2) ...)
         var variables: S[] = [];
+        var tmp: any[] = exps.slice(2);
+        var expressions: any[] = [];
         for (var i = 0; i < exps[1].length; ++i) {
             variables.push(new SStr(exps[1][i]));
+        }
+        for (var i = 0; i < tmp.length; ++i) {
+            expressions.push(ast(tmp[i]));
         }
         return new SLambda([
             new SStr(exps[0]),
             variables,
-            ast(exps[2]),
+            new SBegin([
+                new SStr("begin"),
+                expressions,
+            ]),
         ]);
     } else if (exps[0] === 'begin') {             // (begin (exp1) (exp2) ...)
-        var begin = exps[0];
-        var tmp = exps.slice(1);
-        var expressions = [];
+        var begin: string = exps[0];
+        var tmp: any[] = exps.slice(1);
+        var expressions: any[] = [];
         for (var i = 0; i < tmp.length; ++i) {
             expressions.push(ast(tmp[i]));
         }
