@@ -233,11 +233,27 @@ describe('factrial function', () => {
     });
 });
 
-describe('factrial function', () => {
+describe('factrial function re', () => {
     describe('#evaluate()', () => {
         var global: Environment = createGlobalEnvironment();
         it('should culcurate factorial 5', () => {
             var testfactrial = '(define factrial (lambda (n) (define fact-iter (lambda (k result) (if (> k n) result (fact-iter (+ k 1) (* k result))))) (fact-iter 1 1)))';
+            var parsed = parse(testfactrial);
+            var s = ast(parsed);
+            s.evaluate(global);
+            var test = '(factrial 5)';
+            parsed = parse(test);
+            s = ast(parsed);
+            assert.equal(String(s.evaluate(global)), '120');
+        });
+    });
+});
+
+describe('factrial function re re', () => {
+    describe('#evaluate()', () => {
+        var global: Environment = createGlobalEnvironment();
+        it('should culcurate factorial 5', () => {
+            var testfactrial = '(define (factrial n) (define (fact-iter k res) (if (> k n) res (fact-iter (+ k 1) (* res k)))) (fact-iter 1 1))';
             var parsed = parse(testfactrial);
             var s = ast(parsed);
             s.evaluate(global);
