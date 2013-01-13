@@ -194,3 +194,25 @@ function below(painter1, painter2) {
             )(frame);
         };
 }
+
+var env: Environment = createGlobalEnvironment();
+env.update(
+    ['cat',
+     'flip-vert',
+     'rotate90',
+     'beside',
+     'below',
+    ],
+    [(function () {         // cat
+        var canvas: HTMLCanvasElement =
+            <HTMLCanvasElement> document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        var img = document.getElementById('cat');
+        image2Painter(ctx, img);
+    })(),
+     flipVert,              // flip-vert
+     rotate90,              // rotate90
+     beside,                // beside
+     below,                 // below
+    ]
+);
