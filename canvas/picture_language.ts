@@ -1,5 +1,7 @@
 // Picture language
 
+/// <reference path="../environment.ts"/>
+
 //////////////////////////////////////////////////
 // vector
 //////////////////////////////////////////////////
@@ -179,7 +181,7 @@ function beside(painter1, painter2) {
 }
 
 function below(painter1, painter2) {
-        return function(frame) {
+    return function(frame) {
             transformPainter(
                 painter2,
                 makeVect(0, 0),
@@ -195,24 +197,55 @@ function below(painter1, painter2) {
         };
 }
 
-var env: Environment = createGlobalEnvironment();
-env.update(
-    ['cat',
-     'flip-vert',
-     'rotate90',
-     'beside',
-     'below',
-    ],
-    [(function () {         // cat
-        var canvas: HTMLCanvasElement =
-            <HTMLCanvasElement> document.getElementById('canvas');
-        var ctx = canvas.getContext('2d');
-        var img = document.getElementById('cat');
-        image2Painter(ctx, img);
-    })(),
-     flipVert,              // flip-vert
-     rotate90,              // rotate90
-     beside,                // beside
-     below,                 // below
-    ]
-);
+function rightSplit(painter, n) {
+    if (n == 0) {
+        return painter;
+    } else {
+        var smaller = rightSplit(painter, n - 1);
+        return beside(painter, below(smaller, smaller));
+    }
+}
+
+function add_picture_function(env: Environment) {
+    var canvas: HTMLCanvasElement =
+        <HTMLCanvasElement> document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var imgCat = document.getElementById('cat');
+    var f = makeFullCanvasFrame(canvas)
+    env.update(
+        ['draw',
+         'cat',
+         'full-frame',
+         'flip-vert',
+         'rotate90',
+         'beside',
+         'below',
+        ],
+        [(painters) => painters[0](f),
+         image2Painter(ctx, imgCat),                         // cat
+         makeFullCanvasFrame(canvas),                        // make-full-frame
+         (painters) => flipVert(painters[0]),                // flip-vert
+         (painters) => rotate90(painters[0]),                // rotate90
+         (painters) => beside(painters[0], painters[1]),     // beside
+         (painters) => below(painters[0], painters[1]),      // below
+        ]
+    );
+}
+
+//////////////////////////////////////////////////
+// test
+//////////////////////////////////////////////////
+// window.onload = function () {
+//     var canvas = <HTMLCanvasElement> document.getElementById("canvas");
+//     var ctx = canvas.getContext("2d");
+//     var img = document.getElementById('cat');
+//     var painter = image2Painter(ctx, img);
+//     var frame = makeFrame(
+//         makeVect(0, 0),
+//         makeVect(300, 0),
+//         makeVect(0, 300)
+//     );
+//     // beside(painter, flipVert(painter))(frame);
+//     flipVert(painter)(makeFullCanvasFrame(canvas));
+//     // var t = rightSplit(painter, 3)(makeFullCanvasFrame(canvas));
+// }

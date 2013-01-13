@@ -1,7 +1,7 @@
 all:
-	tsc --out all.js *.ts canvas/picture_language.ts
-	cat *.ts test/tscheme_test.ts > test/test.ts
+	tsc --out src/all.js canvas/picture_language.ts src/*.ts
+	cat src/*.ts test/tscheme_test.ts > test/test.ts
 	tsc test/test.ts
 
 clean:
-	rm -f *.js test/*.js
+	rm -f src/*.js test/*.js
