@@ -221,10 +221,34 @@ describe('let', () => {
     describe('#evaluate()', () => {
         var global: Environment = createGlobalEnvironment();
         it('should evaluate a let object', () => {
+            var testproc = '(let ((n 1)) (+ n 1))';
+            var parsed = parse(testproc);
+            var s = ast(parsed);
+            assert.equal(String(s.evaluate(global)), '2');
+        });
+    });
+});
+
+describe('let', () => {
+    describe('#evaluate()', () => {
+        var global: Environment = createGlobalEnvironment();
+        it('should evaluate a let object', () => {
             var testproc = '(let ((n 1) (m 2)) (+ n m))';
             var parsed = parse(testproc);
             var s = ast(parsed);
             assert.equal(String(s.evaluate(global)), '3');
+        });
+    });
+});
+
+describe('let', () => {
+    describe('#evaluate()', () => {
+        var global: Environment = createGlobalEnvironment();
+        it('should evaluate a let object', () => {
+            var testproc = '(let ((n (lambda (x) (+ x 1)))) (n 1))';
+            var parsed = parse(testproc);
+            var s = ast(parsed);
+            assert.equal(String(s.evaluate(global)), '2');
         });
     });
 });

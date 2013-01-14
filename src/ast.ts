@@ -91,25 +91,36 @@ function ast(exps: any): S {
             new SStr(begin),
             expressions,
         ]);
-    } else if (exps[0] === 'let') {               // (let (vars values) (exp))
-        var let: string = exps[0];                // => ((lambda (vars) (exp)) (values))
+    } else if (exps[0] === 'let') {               // (let ((vars values)) (exp))
+        var let: string = 'lambda';               // => ((lambda (vars) (exp)) (values))
         var variables: S[] = [];
         var values: S[] = [];
-        var conseq: S = ast(exps[2]);
+        var expressions: any[] = [];
+        var tmp: any[] = exps.slice(2);
+        console.log(exps[1].length);
+        console.log(exps[1]);
         for (var i = 0; i < exps[1].length; ++i) {
             variables.push(new SStr(exps[1][i][0]));
             values.push(ast(exps[1][i][1]));
         }
+        console.log('variables: ' + variables);
+        console.log('values: ' + values);
+        for (var i = 0; i < tmp.length; ++i) {
+            expressions.push(ast(tmp[i]));
+        }
         var slambda: S = new SLambda([
             new SStr(let),
             variables,
-            conseq,
+            new SBegin([
+                new SStr("begin"),
+                expressions,
+            ]),
         ]);
-        var expressions: any[] = [slambda];
+        var proc: any[] = [slambda];
         for (var i = 0; i < values.length; ++i) {
-            expressions.push(values[i]);
+            proc.push(values[i]);
         }
-        return new SProc(expressions);
+        return new SProc(proc);
     } else {                                      // (proc exp1 exp2 ...)
         var expressions: any[] = [];
         for (var i = 0; i < exps.length; ++i) {
