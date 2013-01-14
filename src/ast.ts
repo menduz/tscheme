@@ -91,6 +91,25 @@ function ast(exps: any): S {
             new SStr(begin),
             expressions,
         ]);
+    } else if (exps[0] === 'let') {               // (let (vars values) (exp))
+        var let: string = exps[0];                // => ((lambda (vars) (exp)) (values))
+        var variables: S[] = [];
+        var values: S[] = [];
+        var conseq: S = ast(exps[2]);
+        for (var i = 0; i < exps[1].length; ++i) {
+            variables.push(new SStr(exps[1][i][0]));
+            values.push(ast(exps[1][i][1]));
+        }
+        var slambda: S = new SLambda([
+            new SStr(let),
+            variables,
+            conseq,
+        ]);
+        var expressions: any[] = [slambda];
+        for (var i = 0; i < values.length; ++i) {
+            expressions.push(values[i]);
+        }
+        return new SProc(expressions);
     } else {                                      // (proc exp1 exp2 ...)
         var expressions: any[] = [];
         for (var i = 0; i < exps.length; ++i) {

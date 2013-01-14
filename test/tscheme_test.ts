@@ -217,6 +217,18 @@ describe('SProc', () => {
     });
 });
 
+describe('let', () => {
+    describe('#evaluate()', () => {
+        var global: Environment = createGlobalEnvironment();
+        it('should evaluate a let object', () => {
+            var testproc = '(let ((n 1) (m 2)) (+ n m))';
+            var parsed = parse(testproc);
+            var s = ast(parsed);
+            assert.equal(String(s.evaluate(global)), '3');
+        });
+    });
+});
+
 describe('factrial function', () => {
     describe('#evaluate()', () => {
         var global: Environment = createGlobalEnvironment();
