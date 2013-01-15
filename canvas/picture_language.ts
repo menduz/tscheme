@@ -1,54 +1,67 @@
 // Picture language
 
-/// <reference path="../environment.ts"/>
+/// <reference path="../src/environment.ts"/>
 
 //////////////////////////////////////////////////
 // vector
 //////////////////////////////////////////////////
 
-function makeVect(x, y) {
+interface Vector {
+    x: number;
+    y: number;
+}
+
+function makeVect(x: number, y: number):Vector {
     return {x: x, y: y};
 }
 
-function addVect(a, b) {
+function addVect(a: Vector, b: Vector): Vector {
     return makeVect(a.x + b.x, a.y + b.y);
 }
 
-function subVect(a, b) {
+function subVect(a: Vector, b: Vector): Vector {
     return makeVect(a.x - b.x, a.y - b.y);
 }
 
-function scaleVect(s, v){
+function scaleVect(s: number, v: Vector): Vector{
     return makeVect(s * v.x, s * v.y);
 }
 
 //////////////////////////////////////////////////
 // segment
 //////////////////////////////////////////////////
-function makeSegment(start, end) {
+interface Segment {
+    start: Vector;
+    end: Vector;
+}
+
+function makeSegment(start: Vector, end: Vector): Segment {
     return {start: start, end: end};
 }
 
 //////////////////////////////////////////////////
 // frame
 //////////////////////////////////////////////////
-function makeFrame(origin, edge1, edge2) {
+interface Frame {
+    origin: Vector;
+    edge1: Vector;
+    edge2: Vector;
+}
+
+function makeFrame(origin: Vector, edge1: Vector, edge2: Vector): Frame {
     return {origin: origin, edge1: edge1, edge2: edge2};
 }
 
-// origin(frame) + x * edge1(frame) + y * edge2(frame) 
-function frameCoordMap(frame){
-    return function(v){
-        return addVect(
-                frame.origin,
-                addVect(
-                    scaleVect(v.x, frame.edge1),
-                    scaleVect(v.y, frame.edge2))
-        );
-    };
+// origin(frame) + x * edge1(frame) + y * edge2(frame)
+function frameCoordMap(frame: Frame): (Vector) => Vector {
+    return (v: Vector): Vector => addVect(frame.origin,
+                                          addVect(
+                                              scaleVect(v.x, frame.edge1),
+                                              scaleVect(v.y, frame.edge2))
+                                         );
 }
 
-function makeFullCanvasFrame(canvas) {
+function makeFullCanvasFrame(canvas: HTMLCanvasElement): Frame {
     return makeFrame(
         makeVect(0, 0),
         makeVect(canvas.clientWidth, 0),
@@ -59,22 +72,22 @@ function makeFullCanvasFrame(canvas) {
 ////////////////////////////////////////////////
 // draw segment
 ////////////////////////////////////////////////
-function drawLine(context, start, end) {
+function drawLine(context: any, start: Vector, end: Vector): void {
     context.beginPath();
     context.moveTo(start.x, start.y);
     context.lineTo(end.x, end.y);
     context.stroke();
 }
 
-function clearCanvas(context) {
+function clearCanvas(context: any): void {
     context.clearRect(0, 0, context.width, context.height);
 }
 
 //////////////////////////////////////////////////
 // painter
 //////////////////////////////////////////////////
-function segment2Painter(context, segments) {
-    return function(frame) {
+function segment2Painter(context: any, segments: Segment[]): (Frame) => void {
+    return function(frame: Frame): void {
         for (var i = 0; i < segments.length; ++i) {
             drawLine(
                 context,
@@ -85,8 +98,8 @@ function segment2Painter(context, segments) {
     };
 }
 
-function image2Painter(context, img) {
-    return function(frame) {
+function image2Painter(context: any, img: any): (Frame) => void {
+    return function(frame: Frame) {
         var w = img.width;
         var h = img.height;
         context.setTransform(
@@ -105,10 +118,10 @@ function image2Painter(context, img) {
 //////////////////////////////////////////////////
 // operator
 //////////////////////////////////////////////////
-function transformPainter(painter, origin, corner1, corner2) {
-    return function(frame) {
-        var m = frameCoordMap(frame);
-        var new_origin = m(origin);
+function transformPainter(painter: (Frame) => void, origin: Vector, corner1: Vector, corner2: Vector): (Frame) => void {
+    return function(frame: Frame): void {
+        var m: (Vector) => Vector = frameCoordMap(frame);
+        var new_origin: Vector = m(origin);
         painter(
             makeFrame(
                 new_origin,
@@ -119,7 +132,7 @@ function transformPainter(painter, origin, corner1, corner2) {
     };
 }
 
-function flipVert(painter) {
+function flipVert(painter: (Frame) => void): (Frame) => void {
     return transformPainter(
         painter,
         makeVect(0, 1),
@@ -128,7 +141,7 @@ function flipVert(painter) {
     );
 }
 
-function upperRight(painter) {
+function upperRight(painter: (Frame) => void): (Frame) => void {
     return transformPainter(
         painter,
         makeVect(0.5, 0),
@@ -137,7 +150,7 @@ function upperRight(painter) {
     );
 }
 
-function downerRight(painter) {
+function downerRight(painter: (Frame) => void): (Frame) => void {
     return transformPainter(
         painter,
         makeVect(0.5, 0.5),
@@ -146,7 +159,7 @@ function downerRight(painter) {
     );
 }
 
-function rotate90(painter) {
+function rotate90(painter: (Frame) => void): (Frame) => void {
     return transformPainter(
         painter,
         makeVect(1, 0),
@@ -155,7 +168,7 @@ function rotate90(painter) {
     );
 }
 
-function squashInWards(painter) {
+function squashInWards(painter: (Frame) => void): (Frame) => void {
     return transformPainter(
         painter,
         makeVect(0, 0),
@@ -164,24 +177,18 @@ function squashInWards(painter) {
     );
 }
 
-function beside(painter1, painter2) {
-    return (function(paintLeft, paintRight) {
-        return function(frame) {
+function beside(painter1: (Frame) => void, painter2: (Frame) => void): (Frame) => void {
+    return (function(paintLeft: (Frame) => void, paintRight: (Frame) => void): (Frame) => void {
+        return function(frame: Frame): void {
             paintLeft(frame);
             paintRight(frame);
         }
-    })(transformPainter(painter1,
-                        makeVect(0, 0),
-                        makeVect(0.5, 0),
-                        makeVect(0, 1)),
-       transformPainter(painter2,
-                        makeVect(0.5, 0),
-                        makeVect(1, 0),
-                        makeVect(0.5, 1)));
+    })(transformPainter(painter1, makeVect(0, 0), makeVect(0.5, 0), makeVect(0, 1)),
+       transformPainter(painter2, makeVect(0.5, 0), makeVect(1, 0), makeVect(0.5, 1)));
 }
 
-function below(painter1, painter2) {
-    return function(frame) {
+function below(painter1: (Frame) => void, painter2: (Frame) => void): (Frame) => void {
+    return function(frame: Frame): void {
             transformPainter(
                 painter2,
                 makeVect(0, 0),
@@ -197,7 +204,7 @@ function below(painter1, painter2) {
         };
 }
 
-function rightSplit(painter, n) {
+function rightSplit(painter: (Frame) => void, n: number): (Frame) => void {
     if (n == 0) {
         return painter;
     } else {
@@ -206,12 +213,12 @@ function rightSplit(painter, n) {
     }
 }
 
-function add_picture_function(env: Environment) {
+function addPictureFunction(env: Environment): void {
     var canvas: HTMLCanvasElement =
         <HTMLCanvasElement> document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
     var imgCat = document.getElementById('cat');
-    var f = makeFullCanvasFrame(canvas)
+    var f = makeFullCanvasFrame(canvas);
     env.update(
         ['draw',
          'cat',
