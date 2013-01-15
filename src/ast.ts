@@ -97,14 +97,10 @@ function ast(exps: any): S {
         var values: S[] = [];
         var expressions: any[] = [];
         var tmp: any[] = exps.slice(2);
-        console.log(exps[1].length);
-        console.log(exps[1]);
         for (var i = 0; i < exps[1].length; ++i) {
             variables.push(new SStr(exps[1][i][0]));
             values.push(ast(exps[1][i][1]));
         }
-        console.log('variables: ' + variables);
-        console.log('values: ' + values);
         for (var i = 0; i < tmp.length; ++i) {
             expressions.push(ast(tmp[i]));
         }
