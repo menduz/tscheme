@@ -11,7 +11,7 @@ interface Vector {
     y: number;
 }
 
-function makeVect(x: number, y: number):Vector {
+function makeVect(x: number, y: number): Vector {
     return {x: x, y: y};
 }
 
@@ -90,7 +90,7 @@ function segment2Painter(context: any, segments: Segment[]): (Frame) => void {
     return function(frame: Frame): void {
         for (var i = 0; i < segments.length; ++i) {
             drawLine(
-                context,
+e                context,
                 frameCoordMap(frame)(segments[i].start),
                 frameCoordMap(frame)(segments[i].end)
             );
