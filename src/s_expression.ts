@@ -198,3 +198,15 @@ class SProc extends S {
         return proc(expressions);
     }
 }
+
+//////////////////////////////////////////////////
+// sleep
+//////////////////////////////////////////////////
+function sleep(milliseconds: number) {
+    var start: number = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){ 
+            break;
+        }
+    }
+}
