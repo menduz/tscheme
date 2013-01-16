@@ -4,4 +4,4 @@ all:
 	tsc test/test.ts
 
 clean:
-	rm -f src/*.js test/*.js
+	rm -f src/*.js test/*.js canvas/*.js
