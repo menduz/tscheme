@@ -219,11 +219,13 @@ function addPictureFunction(env: Environment): void {
     var ctx = canvas.getContext('2d');
     var imgCat = document.getElementById('cat');
     var imgHuman = document.getElementById('human');
+    var imgHex = document.getElementById('hex');
     var f = makeFullCanvasFrame(canvas);
     env.update(
         ['draw',
          'cat',
          'human',
+         'hex',
          'full-frame',
          'flip-vert',
          'rotate90',
@@ -233,6 +235,7 @@ function addPictureFunction(env: Environment): void {
         [(painters) => painters[0](f),
          image2Painter(ctx, imgCat),                         // cat
          image2Painter(ctx, imgHuman),                       // Human
+         image2Painter(ctx, imgHex),                         // hex
          makeFullCanvasFrame(canvas),                        // make-full-frame
          (painters) => flipVert(painters[0]),                // flip-vert
          (painters) => rotate90(painters[0]),                // rotate90
