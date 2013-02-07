@@ -15,7 +15,9 @@
 (define (round painter n) (let ((corner (corner-split painter n))) (let ((half (below (flip-vert corner) corner))) (beside (rotate90 (rotate90 half)) half))))
 (draw (round cat 3))
         </textarea><br>
-        <input type="button" onclick="run(document.getElementById('input').value)" value="evaluate" />
+        <input type="button" onclick="run(document.getElementById('input').value)" value="Evaluate" /><br>
+        <input type="button" onclick="create_painter(document.getElementById('get_url').value)" value="Get a image from url" />
+        <input type="url" id="get_url" value="" placeholder="">
     </form>
 
     <div id="main"></div>
@@ -36,7 +38,11 @@
             res += s.evaluate(global);
             res += '\n';
         }
-        document.getElementById("main").innerText=res;
+        document.getElementById("main").innerText= res;
+    }
+
+    create_painter = function(s) {
+        document.getElementById("from_url").src= s;
     }
     </script>
   </body>
