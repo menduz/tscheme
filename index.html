@@ -15,8 +15,8 @@
 (define (round painter n) (let ((corner (corner-split painter n))) (let ((half (below (flip-vert corner) corner))) (beside (rotate90 (rotate90 half)) half))))
 (draw (round cat 3))
         </textarea><br>
-        <input type="button" onclick="run(document.getElementById('input').value)" value="Evaluate" /><br>
-        <input type="button" onclick="create_painter(document.getElementById('get_url').value)" value="Get a image from url" />
+        <input type="button" onclick="run()" value="Evaluate" /><br>
+        <input type="button" onclick="create_painter()" value="Get a image from url" />
         <input type="url" id="get_url" value="" placeholder="">
     </form>
 
@@ -24,10 +24,11 @@
     <canvas id="canvas" width="500" height="500" ></canvas>
     <script type="text/javascript" src="src/all.js"></script>
     <script type="text/javascript">
-    run = function(s) {
+    run = function() {
+        var expressions = document.getElementById("input").value;
         var global = createGlobalEnvironment();
         addPictureFunction(global);
-        var list = s.split('\n');
+        var list = expressions.split('\n');
         var res = "";
         for (var i = 0; i < list.length && list[i] !== ''; ++i) {
             var parsed = parse(list[i]);
@@ -41,8 +42,9 @@
         document.getElementById("main").innerText= res;
     }
 
-    create_painter = function(s) {
-        document.getElementById("from_url").src= s;
+    create_painter = function() {
+        var url = document.getElementById("get_url").value;
+        document.getElementById("from_url").src = url;
     }
     </script>
   </body>
