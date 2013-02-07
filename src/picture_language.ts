@@ -218,10 +218,12 @@ function addPictureFunction(env: Environment): void {
         <HTMLCanvasElement> document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
     var imgCat = document.getElementById('cat');
+    var imgFromURL = document.getElementById('from_url');
     var f = makeFullCanvasFrame(canvas);
     env.update(
         ['draw',
          'cat',
+         'from-url',
          'full-frame',
          'flip-vert',
          'rotate90',
@@ -230,6 +232,7 @@ function addPictureFunction(env: Environment): void {
         ],
         [(painters) => painters[0](f),
          image2Painter(ctx, imgCat),                         // cat
+         image2Painter(ctx, imgFromURL),                     // from-url
          makeFullCanvasFrame(canvas),                        // make-full-frame
          (painters) => flipVert(painters[0]),                // flip-vert
          (painters) => rotate90(painters[0]),                // rotate90
