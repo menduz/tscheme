@@ -8,11 +8,35 @@
   </head>
   <body>
     <form>
-<textarea id="input" style='width:100%; height:25%;'>
-(define (right-split painter n) (if (eq? n 0) painter (let ((smaller (right-split painter (- n 1)))) (beside painter (below smaller smaller)))))
-(define (up-split painter n) (if (eq? n 0) painter (let ((smaller (up-split painter (- n 1)))) (below painter (beside smaller smaller)))))
-(define (corner-split painter n) (if (eq? n 0) painter (let ((up (up-split painter (- n 1))) (right (right-split painter (- n 1)))) (let ((top-left (beside up up)) (bottom-right (below right right)) (corner (corner-split painter (- n 1)))) (beside (below painter top-left) (below bottom-right corner))))))
-(define (round painter n) (let ((corner (corner-split painter n))) (let ((half (below (flip-vert corner) corner))) (beside (rotate90 (rotate90 half)) half))))
+<textarea id="input" style='width:100%; height:50%;'>
+(define (right-split painter n)
+  (if (eq? n 0)
+      painter
+      (let ((smaller (right-split painter (- n 1))))
+        (beside painter (below smaller smaller)))))
+
+(define (up-split painter n)
+  (if (eq? n 0)
+      painter
+      (let ((smaller (up-split painter (- n 1))))
+        (below painter (beside smaller smaller)))))
+
+(define (corner-split painter n)
+  (if (eq? n 0)
+      painter
+      (let ((up (up-split painter (- n 1)))
+            (right (right-split painter (- n 1))))
+        (let ((top-left (beside up up))
+              (bottom-right (below right right))
+              (corner (corner-split painter (- n 1))))
+          (beside (below painter top-left)
+                  (below bottom-right corner))))))
+
+(define (round painter n)
+  (let ((corner (corner-split painter n)))
+    (let ((half (below (flip-vert corner) corner)))
+      (beside (rotate90 (rotate90 half)) half))))
+
 (draw (round cat 3))
 </textarea><br>
         <input type="button" onclick="run()" value="Evaluate" /><br>
@@ -28,11 +52,6 @@
         var expressions = document.getElementById("input").value;
         var global = createGlobalEnvironment();
         addPictureFunction(global);
-
-        // test
-        // var tmp = expressions.split('\n\n');
-        // console.log(tmp);
-
         var list = expressions.split('\n\n');
         var res = "";
         for (var i = 0; i < list.length && list[i] !== ''; ++i) {
