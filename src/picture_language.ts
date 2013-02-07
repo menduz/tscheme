@@ -1,6 +1,6 @@
 // Picture language
 
-/// <reference path="../src/environment.ts"/>
+/// <reference path="environment.ts"/>
 
 //////////////////////////////////////////////////
 // vector
