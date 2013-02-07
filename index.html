@@ -28,10 +28,15 @@
         var expressions = document.getElementById("input").value;
         var global = createGlobalEnvironment();
         addPictureFunction(global);
-        var list = expressions.split('\n');
+
+        // test
+        // var tmp = expressions.split('\n\n');
+        // console.log(tmp);
+
+        var list = expressions.split('\n\n');
         var res = "";
         for (var i = 0; i < list.length && list[i] !== ''; ++i) {
-            var parsed = parse(list[i]);
+            var parsed = parse(list[i].replace('\n', ' '));
             var s = ast(parsed);
             res += '>>> ';
             res += s.toString();
