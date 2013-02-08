@@ -7,6 +7,5 @@ obj/
 *~
 *.js
 test/test.ts
-img/*
 slide
 !src/all.js
