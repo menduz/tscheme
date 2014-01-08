@@ -1,6 +1,6 @@
 {
     "name": "tscheme"
-  , "version": "0.8.3"
+  , "version": "0.0.1"
   , "dependencies": {
     }
   , "devDependencies": {
