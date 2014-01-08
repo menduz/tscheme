@@ -7,7 +7,7 @@
         "mocha": "*"
       , "should": "*"
       , "sinon": "*"
-      , "typescript": "*"
+      , "typescript": "0.8.2"
     }
   , "scripts": {
         "test": "make clean all && mocha test/test.js -t 10000"
